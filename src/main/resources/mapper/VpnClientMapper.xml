@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vpnfleet.mapper.VpnClientMapper">
+
+  <resultMap id="VpnClientResultMap" type="com.vpnfleet.entity.VpnClient">
+    <id property="id" column="id"/>
+    <result property="userId" column="user_id"/>
+    <result property="nodeId" column="node_id"/>
+    <result property="externalClientId" column="external_client_id"/>
+    <result property="config" column="config"/>
+    <result property="status" column="status"/>
+    <result property="issuedAt" column="issued_at"/>
+    <result property="revokedAt" column="revoked_at"/>
+    <result property="expiresAt" column="expires_at"/>
+  </resultMap>
+
+  <sql id="columns">id, user_id, node_id, external_client_id, config, status, issued_at, revoked_at, expires_at</sql>
+
+  <select id="findByUserId" resultMap="VpnClientResultMap">
+    SELECT <include refid="columns"/>
+    FROM vpn_clients
+    WHERE user_id = #{userId}
+    ORDER BY issued_at DESC
+  </select>
+
+  <select id="findById" resultMap="VpnClientResultMap">
+    SELECT <include refid="columns"/>
+    FROM vpn_clients
+    WHERE id = #{id}
+  </select>
+
+  <select id="findAll" resultMap="VpnClientResultMap">
+    SELECT <include refid="columns"/>
+    FROM vpn_clients
+    ORDER BY issued_at DESC
+  </select>
+
+  <insert id="insert" parameterType="com.vpnfleet.entity.VpnClient" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO vpn_clients (user_id, node_id, external_client_id, config, status, expires_at)
+    VALUES (#{userId}, #{nodeId}, #{externalClientId}, #{config}, #{status}, #{expiresAt})
+  </insert>
+
+  <update id="revoke">
+    UPDATE vpn_clients
+    SET status = 'REVOKED', revoked_at = now()
+    WHERE id = #{id} AND status = 'ACTIVE'
+  </update>
+
+</mapper>

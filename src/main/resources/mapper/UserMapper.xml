@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vpnfleet.mapper.UserMapper">
+
+  <resultMap id="UserResultMap" type="com.vpnfleet.entity.User">
+    <id property="id" column="id"/>
+    <result property="email" column="email"/>
+    <result property="passwordHash" column="password_hash"/>
+    <result property="role" column="role"/>
+    <result property="createdAt" column="created_at"/>
+  </resultMap>
+
+  <select id="findByEmail" resultMap="UserResultMap">
+    SELECT id, email, password_hash, role, created_at
+    FROM users
+    WHERE email = #{email}
+  </select>
+
+  <select id="findById" resultMap="UserResultMap">
+    SELECT id, email, password_hash, role, created_at
+    FROM users
+    WHERE id = #{id}
+  </select>
+
+  <insert id="insert" parameterType="com.vpnfleet.entity.User" useGeneratedKeys="true" keyProperty="id">
+    INSERT INTO users (email, password_hash, role)
+    VALUES (#{email}, #{passwordHash}, #{role})
+  </insert>
+
+</mapper>
